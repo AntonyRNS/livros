@@ -5,10 +5,19 @@ import random
 def gerar_cor_hex():
     return "#{:06x}".format(random.randint(0, 0xFFFFFF))
 
+# Criação Perfil
+class Perfil(models.Model):
+    bio = models.CharField(max_length=50)
+    usuario = models.OneToOneField(User, related_name='perfis', on_delete=models.CASCADE)
+
+# Criação Editora
+class Editora(models.Model):
+    pass
+
+
 class Tag(models.Model):
     nome = models.CharField(max_length=50, unique=True)
     cor = models.CharField(max_length=7, default=gerar_cor_hex, editable=False)
-
     def __str__(self):
         return self.nome
 
@@ -19,6 +28,9 @@ class Livro(models.Model):
     sinopse = models.TextField(blank=True)
     capa = models.ImageField(upload_to='capas/', blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True, related_name='livros')
+    @property
+    def qtd_resenhas(self):
+        return self.resenhas.count()
 
     def __str__(self):
         return f"{self.titulo} ({self.autor})"
